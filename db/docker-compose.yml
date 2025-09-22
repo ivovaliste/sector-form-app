@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  database:
+    container_name: test-work-db
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ${PWD}/data:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
