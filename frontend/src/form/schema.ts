@@ -8,5 +8,4 @@ export const userSchema = z.object({
   }),
 });
 
-// Optional: export type for use with react-hook-form
 export type UserFormValues = z.infer<typeof userSchema>;

@@ -1,69 +1,53 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.UserRequest;
+import com.example.backend.dto.UserResponse;
+import com.example.backend.dto.SectorSubcategoryResponse;
 import com.example.backend.model.User;
 import com.example.backend.model.SectorSubcategory;
-import com.example.backend.repository.UserRepository;
-import com.example.backend.repository.SectorSubcategoryRepository;
+import com.example.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
 public class UserController {
 
-    private final UserRepository userRepo;
-    private final SectorSubcategoryRepository subcategoryRepo;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepo, SectorSubcategoryRepository subcategoryRepo) {
-        this.userRepo = userRepo;
-        this.subcategoryRepo = subcategoryRepo;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-
-@PostMapping
-public User createOrUpdateUser(@RequestBody UserRequest request) {
-    User user;
-
-    if (request.getId() != null) {
-        // Update existing user
-        user = userRepo.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getId()));
-    } else {
-        // Create new user
-        user = new User();
+    @PostMapping
+    public UserResponse createOrUpdateUser(@RequestBody UserRequest request) {
+        User user = userService.createOrUpdateUser(request);
+        return toDto(user);
     }
-
-    user.setName(request.getName());
-    user.setAgreedToTerms(request.isAgreedToTerms());
-
-    List<SectorSubcategory> subcategories = subcategoryRepo.findAllById(request.getSubcategoryIds());
-    user.setSubcategories(subcategories);
-
-    return userRepo.save(user);
-}
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    public UserResponse getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        return toDto(user);
     }
 
-public static class UserRequest {
-    private Long id;  // optional for updates
-    private String name;
-    private List<Long> subcategoryIds;
-    private boolean agreedToTerms;
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public List<Long> getSubcategoryIds() { return subcategoryIds; }
-    public void setSubcategoryIds(List<Long> subcategoryIds) { this.subcategoryIds = subcategoryIds; }
-    public boolean isAgreedToTerms() { return agreedToTerms; }
-    public void setAgreedToTerms(boolean agreedToTerms) { this.agreedToTerms = agreedToTerms; }
-}
+    private UserResponse toDto(User user) {
+        UserResponse dto = new UserResponse();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setAgreedToTerms(user.isAgreedToTerms());
+        List<SectorSubcategoryResponse> subDtos = user.getSubcategories().stream()
+                .map(sub -> {
+                    SectorSubcategoryResponse subDto = new SectorSubcategoryResponse();
+                    subDto.setId(sub.getId());
+                    subDto.setName(sub.getName());
+                    return subDto;
+                })
+                .collect(Collectors.toList());
+        dto.setSubcategories(subDtos);
+        return dto;
+    }
 }

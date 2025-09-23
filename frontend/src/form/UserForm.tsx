@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Select, { GroupBase } from "react-select";
-import { useForm, Controller } from "react-hook-form";
+import { GroupBase } from "react-select";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { updateUser, useUser } from "../api/user";
 import { useCategories } from "../api/sectors";
 import { UserFormValues, userSchema } from "./schema";
 import { UserRequest, Option } from "../types/user";
+import {
+  CustomButton,
+  Checkbox,
+  MultiSelect,
+  Alert,
+  TextInput,
+} from "../components";
 
 type Props = {
   onSubmitSuccess?: () => void;
@@ -17,6 +24,7 @@ const UserForm: React.FC<Props> = ({ onSubmitSuccess }) => {
     const storedId = sessionStorage.getItem("userId");
     return storedId ? Number(storedId) : undefined;
   });
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const { data: categories } = useCategories();
   const { data: user } = useUser(userId);
@@ -64,6 +72,9 @@ const UserForm: React.FC<Props> = ({ onSubmitSuccess }) => {
     };
 
     const updatedUser = await updateUser(payload);
+    setSuccessMessage(
+      userId ? "User updated successfully!" : "User created successfully!"
+    );
 
     setUserId(updatedUser.id);
     sessionStorage.setItem("userId", updatedUser.id?.toString() || "");
@@ -76,16 +87,14 @@ const UserForm: React.FC<Props> = ({ onSubmitSuccess }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-lg mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6 space-y-6"
     >
-      {/* Name */}
-      <div>
-        <label className="block  text-left font-medium text-gray-700 mb-2">
-          Name
-        </label>
-
-        <input
-          {...register("name")}
-          className="w-full rounded-lg border border-gray-300 p-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <Alert
+        message={successMessage}
+        duration={2000}
+        type="success"
+        onClose={() => setSuccessMessage("")}
+      />
+      <TextInput label="Name" name="name" register={register} />
+      <div className="mt-6">
         {errors.name && (
           <p className="text-red-500  text-sm text-left mt-1">
             {errors.name.message}
@@ -93,59 +102,30 @@ const UserForm: React.FC<Props> = ({ onSubmitSuccess }) => {
         )}
       </div>
 
-      {/* Subcategories */}
-      <div>
-        <label className="block  text-left font-medium text-gray-700 mb-2">
-          Subcategories
-        </label>
-        <Controller
-          control={control}
-          name="subcategoryIds"
-          render={({ field }) => (
-            <Select
-              options={groupedOptions}
-              isMulti
-              className="text-sm mb-2"
-              value={groupedOptions
-                .flatMap((group) => group.options)
-                .filter((opt) => field.value.includes(opt.value))}
-              onChange={(selected) =>
-                field.onChange((selected as Option[]).map((s) => s.value))
-              }
-            />
-          )}
-        />
-        {errors.subcategoryIds && (
-          <p className="text-red-500 text-sm text-left mt-1">
-            {errors.subcategoryIds.message}
-          </p>
-        )}
-      </div>
+      <MultiSelect
+        control={control}
+        name="subcategoryIds"
+        label="Categories"
+        groupedOptions={groupedOptions}
+      />
+      {errors.subcategoryIds && (
+        <p className="text-red-500 text-sm text-left mt-1">
+          {errors.subcategoryIds.message}
+        </p>
+      )}
 
-      {/* Checkbox */}
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          {...register("agreedToTerms")}
-          className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-        />
-        <label className="ml-2 block text-sm text-gray-700">
-          Agreed to Terms
-        </label>
-      </div>
+      <Checkbox label="Agreed to Terms" register={register("agreedToTerms")} />
       {errors.agreedToTerms && (
         <p className="text-red-500 text-sm text-left mt-1">
           {errors.agreedToTerms.message}
         </p>
       )}
 
-      {/* Submit button */}
-      <button
+      <CustomButton
+        text={userId ? "Update User" : "Create User"}
+        color={userId ? "green" : "blue"}
         type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition duration-200"
-      >
-        {userId ? "Update User" : "Create User"}
-      </button>
+      />
     </form>
   );
 };

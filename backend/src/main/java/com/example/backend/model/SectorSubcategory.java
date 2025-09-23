@@ -20,6 +20,12 @@ public class SectorSubcategory {
 
     public SectorSubcategory() {}
 
+    public SectorSubcategory(Long id, String name, SectorCategory category) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+    }
+
     public SectorSubcategory(String name, SectorCategory category) {
         this.name = name;
         this.category = category;
@@ -28,8 +34,10 @@ public class SectorSubcategory {
     // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
     public SectorCategory getCategory() { return category; }
     public void setCategory(SectorCategory category) { this.category = category; }
 }

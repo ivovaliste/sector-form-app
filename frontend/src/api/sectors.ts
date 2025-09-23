@@ -11,10 +11,9 @@ export const fetchCategories = async (): Promise<Category[]> => {
   }
 };
 
-// React Query hook
 export const useCategories = () => {
   return useQuery<Category[], Error>({
-    queryKey: ["categories"], // unique cache key
+    queryKey: ["categories"],
     queryFn: fetchCategories,
   });
 };

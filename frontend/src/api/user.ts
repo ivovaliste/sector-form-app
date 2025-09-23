@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from ".";
 import { UserRequest, UserResponse } from "../types/user";
 
-// Fetcher function
 export const fetchUserById = async (id: number): Promise<UserRequest> => {
   const data = await api.get(`users/${id}`).json<UserResponse>();
 
@@ -14,7 +13,6 @@ export const fetchUserById = async (id: number): Promise<UserRequest> => {
   };
 };
 
-// React hook using React Query
 export const useUser = (id?: number) => {
   return useQuery<UserRequest, Error>({
     queryKey: ["user", id],
