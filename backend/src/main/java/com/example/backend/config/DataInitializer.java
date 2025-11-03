@@ -1,9 +1,7 @@
 package com.example.backend.config;
 
-import com.example.backend.model.SectorCategory;
-import com.example.backend.model.SectorSubcategory;
-import com.example.backend.repository.SectorCategoryRepository;
-import com.example.backend.repository.SectorSubcategoryRepository;
+import com.example.backend.model.Sector;
+import com.example.backend.repository.SectorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,105 +10,136 @@ import org.springframework.context.annotation.Configuration;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initSectors(SectorCategoryRepository categoryRepo,
-                                  SectorSubcategoryRepository subcategoryRepo) {
+    CommandLineRunner initSectors(SectorRepository sectorRepository) {
+
+
+
+
+
         return args -> {
 
-         
-            if (categoryRepo.count() > 0) return;
+            boolean shouldClean = false;
 
-            // ----- Categories -----
-            SectorCategory manufacturing = categoryRepo.save(new SectorCategory("Manufacturing"));
-            SectorCategory food = categoryRepo.save(new SectorCategory("Food and Beverage"));
-            SectorCategory furniture = categoryRepo.save(new SectorCategory("Furniture"));
-            SectorCategory machinery = categoryRepo.save(new SectorCategory("Machinery"));
-            SectorCategory metalworking = categoryRepo.save(new SectorCategory("Metalworking"));
-            SectorCategory plastic = categoryRepo.save(new SectorCategory("Plastic and Rubber"));
-            SectorCategory printing = categoryRepo.save(new SectorCategory("Printing"));
-            SectorCategory textile = categoryRepo.save(new SectorCategory("Textile and Clothing"));
-            SectorCategory wood = categoryRepo.save(new SectorCategory("Wood"));
-            SectorCategory other = categoryRepo.save(new SectorCategory("Other"));
-            SectorCategory service = categoryRepo.save(new SectorCategory("Service"));
-            SectorCategory engineering = categoryRepo.save(new SectorCategory("Engineering"));
+            if (shouldClean) {
+                System.out.println("Cleaning sector table...");
+                sectorRepository.deleteAll(); // deletes all records
+            }
 
-            // ----- Subcategories -----
+            if (sectorRepository.count() > 0) return;
+
+            // ===== Top-Level Categories =====
+            Sector manufacturing = sectorRepository.save(new Sector("Manufacturing", null));
+            Sector other = sectorRepository.save(new Sector("Other", null));
+            Sector service = sectorRepository.save(new Sector("Service", null));
+
+
+            // ===== Subcategories =====
             // Manufacturing
-            subcategoryRepo.save(new SectorSubcategory("Construction materials", manufacturing));
-            subcategoryRepo.save(new SectorSubcategory("Electronics and Optics", manufacturing));
+            Sector food = sectorRepository.save(new Sector("Food and Beverage", manufacturing));
+            Sector furniture = sectorRepository.save(new Sector("Furniture", manufacturing));
+            Sector machinery = sectorRepository.save(new Sector("Machinery", manufacturing));
+            Sector metalworking = sectorRepository.save(new Sector("Metalworking", manufacturing));
+            Sector plastic = sectorRepository.save(new Sector("Plastic and Rubber", manufacturing));
+            Sector printing = sectorRepository.save(new Sector("Printing", manufacturing));
+            Sector textile = sectorRepository.save(new Sector("Textile and Clothing", manufacturing));
+            Sector wood = sectorRepository.save(new Sector("Wood", manufacturing));
+            sectorRepository.save(new Sector("Construction materials", manufacturing));
+            sectorRepository.save(new Sector("Electronics and Optics", manufacturing));
 
-            // Food
-            subcategoryRepo.save(new SectorSubcategory("Bakery & confectionery products", food));
-            subcategoryRepo.save(new SectorSubcategory("Beverages", food));
-            subcategoryRepo.save(new SectorSubcategory("Fish & fish products", food));
-            subcategoryRepo.save(new SectorSubcategory("Meat & meat products", food));
-            subcategoryRepo.save(new SectorSubcategory("Milk & dairy products", food));
-            subcategoryRepo.save(new SectorSubcategory("Sweets & snack food", food));
+
+
+
+            // Food and Beverage
+            sectorRepository.save(new Sector("Bakery & confectionery products", food));
+            sectorRepository.save(new Sector("Beverages", food));
+            sectorRepository.save(new Sector("Fish & fish products", food));
+            sectorRepository.save(new Sector("Meat & meat products", food));
+            sectorRepository.save(new Sector("Milk & dairy products", food));
+            sectorRepository.save(new Sector("Sweets & snack food", food));
+            sectorRepository.save(new Sector("Other", food));
+
 
             // Furniture
-            subcategoryRepo.save(new SectorSubcategory("Bathroom/sauna", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Bedroom", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Children’s room", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Kitchen", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Living room", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Office", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Other (Furniture)", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Outdoor", furniture));
-            subcategoryRepo.save(new SectorSubcategory("Project furniture", furniture));
+            sectorRepository.save(new Sector("Bathroom/sauna", furniture));
+            sectorRepository.save(new Sector("Bedroom", furniture));
+            sectorRepository.save(new Sector("Children’s room", furniture));
+            sectorRepository.save(new Sector("Kitchen", furniture));
+            sectorRepository.save(new Sector("Living room", furniture));
+            sectorRepository.save(new Sector("Office", furniture));
+            sectorRepository.save(new Sector("Other (Furniture)", furniture));
+            sectorRepository.save(new Sector("Outdoor", furniture));
+            sectorRepository.save(new Sector("Project furniture", furniture));
 
             // Machinery
-            subcategoryRepo.save(new SectorSubcategory("Machinery components", machinery));
-            subcategoryRepo.save(new SectorSubcategory("Machinery equipment/tools", machinery));
-            subcategoryRepo.save(new SectorSubcategory("Manufacture of machinery", machinery));
+            sectorRepository.save(new Sector("Machinery components", machinery));
+            sectorRepository.save(new Sector("Machinery equipment/tools", machinery));
+            sectorRepository.save(new Sector("Manufacture of machinery", machinery));
+
+            Sector maritime= sectorRepository.save(new Sector("Maritime",machinery));
+            sectorRepository.save(new Sector("Metal structures", machinery));
+            sectorRepository.save(new Sector("Other", machinery));
+            sectorRepository.save(new Sector("Repair and maintenance service", machinery));
+
+            // Maritime
+            sectorRepository.save(new Sector("Aluminium and steel workboats", maritime));
+            sectorRepository.save(new Sector("Boat/Yacht building", maritime));
+            sectorRepository.save(new Sector("Ship repair and conversion", maritime));
 
             // Metalworking
-            subcategoryRepo.save(new SectorSubcategory("Construction of metal structures", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("Houses and buildings", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("Metal products", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("Metal works", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("CNC-machining", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("Forgings, Fasteners", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("Gas, Plasma, Laser cutting", metalworking));
-            subcategoryRepo.save(new SectorSubcategory("MIG, TIG, Aluminum welding", metalworking));
+            sectorRepository.save(new Sector("Construction of metal structures", metalworking));
+            sectorRepository.save(new Sector("Houses and buildings", metalworking));
+            sectorRepository.save(new Sector("Metal products", metalworking));
+            Sector metalWorks = sectorRepository.save(new Sector("Metal works", metalworking));
 
-            // Plastic
-            subcategoryRepo.save(new SectorSubcategory("Packaging", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Plastic goods", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Plastic processing technology", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Blowing", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Moulding", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Plastics welding and processing", plastic));
-            subcategoryRepo.save(new SectorSubcategory("Plastic profiles", plastic));
+            sectorRepository.save(new Sector("CNC-machining", metalWorks));
+            sectorRepository.save(new Sector("Forgings, Fasteners", metalWorks));
+            sectorRepository.save(new Sector("Gas, Plasma, Laser cutting", metalWorks));
+            sectorRepository.save(new Sector("MIG, TIG, Aluminum welding", metalWorks));
+
+            // Plastic and Rubber
+            sectorRepository.save(new Sector("Packaging", plastic));
+            sectorRepository.save(new Sector("Plastic goods", plastic));
+            Sector plasticProcessingTechnology = sectorRepository.save(new Sector("Plastic processing technology", plastic));
+            sectorRepository.save(new Sector("Blowing", plasticProcessingTechnology));
+            sectorRepository.save(new Sector("Moulding", plasticProcessingTechnology));
+            sectorRepository.save(new Sector("Plastics welding and processing", plasticProcessingTechnology));
+            sectorRepository.save(new Sector("Plastic profiles", plastic));
 
             // Printing
-            subcategoryRepo.save(new SectorSubcategory("Advertising", printing));
-            subcategoryRepo.save(new SectorSubcategory("Book/Periodicals printing", printing));
-            subcategoryRepo.save(new SectorSubcategory("Labelling and packaging printing", printing));
+            sectorRepository.save(new Sector("Advertising", printing));
+            sectorRepository.save(new Sector("Book/Periodicals printing", printing));
+            sectorRepository.save(new Sector("Labelling and packaging printing", printing));
 
-            // Textile
-            subcategoryRepo.save(new SectorSubcategory("Clothing", textile));
-            subcategoryRepo.save(new SectorSubcategory("Textile", textile));
+            // Textile and Clothing
+            sectorRepository.save(new Sector("Clothing", textile));
+            sectorRepository.save(new Sector("Textile", textile));
 
             // Wood
-            subcategoryRepo.save(new SectorSubcategory("Other (Wood)", wood));
-            subcategoryRepo.save(new SectorSubcategory("Wooden building materials", wood));
-            subcategoryRepo.save(new SectorSubcategory("Wooden houses", wood));
+            sectorRepository.save(new Sector("Other (Wood)", wood));
+            sectorRepository.save(new Sector("Wooden building materials", wood));
+            sectorRepository.save(new Sector("Wooden houses", wood));
 
             // Other
-            subcategoryRepo.save(new SectorSubcategory("Creative industries", other));
+            sectorRepository.save(new Sector("Creative industries", other));
+            sectorRepository.save(new Sector("Energy technology", other));
+            sectorRepository.save(new Sector("Environment", other));
+
 
             // Service
-            subcategoryRepo.save(new SectorSubcategory("Business services", service));
-            subcategoryRepo.save(new SectorSubcategory("Information Technology and Telecommunications", service));
-            subcategoryRepo.save(new SectorSubcategory("Data processing, Web portals, E-marketing", service));
-            subcategoryRepo.save(new SectorSubcategory("Programming, Consultancy", service));
-            subcategoryRepo.save(new SectorSubcategory("Software, Hardware", service));
-            subcategoryRepo.save(new SectorSubcategory("Telecommunications", service));
-            subcategoryRepo.save(new SectorSubcategory("Tourism", service));
-            subcategoryRepo.save(new SectorSubcategory("Translation services", service));
-            subcategoryRepo.save(new SectorSubcategory("Transport and Logistics", service));
-
-            // Engineering
-            subcategoryRepo.save(new SectorSubcategory("Engineering", engineering));
+            sectorRepository.save(new Sector("Business services", service));
+            sectorRepository.save(new Sector("Engineering", service));
+            Sector informationTechnologyAndTelecommunications =sectorRepository.save(new Sector("Information Technology and Telecommunications", service));
+            sectorRepository.save(new Sector("Data processing, Web portals, E-marketing", informationTechnologyAndTelecommunications));
+            sectorRepository.save(new Sector("Programming, Consultancy", informationTechnologyAndTelecommunications));
+            sectorRepository.save(new Sector("Software, Hardware", informationTechnologyAndTelecommunications));
+            sectorRepository.save(new Sector("Telecommunications", informationTechnologyAndTelecommunications));
+            sectorRepository.save(new Sector("Tourism", service));
+            sectorRepository.save(new Sector("Translation services", service));
+            Sector TransportLogistics = sectorRepository.save(new Sector("Transport and Logistics", service));
+            sectorRepository.save(new Sector("Air", TransportLogistics));
+            sectorRepository.save(new Sector("Rail", TransportLogistics));
+            sectorRepository.save(new Sector("Road", TransportLogistics));
+            sectorRepository.save(new Sector("Water", TransportLogistics));
         };
     }
 }

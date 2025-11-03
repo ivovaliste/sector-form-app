@@ -16,16 +16,16 @@ public class User {
 
     private boolean agreedToTerms;
 
+    // --- Many-to-Many with Sector (single table) ---
     @ManyToMany
     @JoinTable(
-            name = "user_subcategories",
+            name = "user_sectors",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subcategory_id")
+            inverseJoinColumns = @JoinColumn(name = "sector_id")
     )
-    private List<SectorSubcategory> subcategories = new ArrayList<>(); // <- initialized here
+    private List<Sector> sectors = new ArrayList<>();
 
     // --- Constructors ---
-
     public User() {}
 
     public User(String name, boolean agreedToTerms) {
@@ -40,7 +40,6 @@ public class User {
     }
 
     // --- Getters & Setters ---
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -50,8 +49,8 @@ public class User {
     public boolean isAgreedToTerms() { return agreedToTerms; }
     public void setAgreedToTerms(boolean agreedToTerms) { this.agreedToTerms = agreedToTerms; }
 
-    public List<SectorSubcategory> getSubcategories() { return subcategories; }
-    public void setSubcategories(List<SectorSubcategory> subcategories) { 
-        this.subcategories = subcategories != null ? subcategories : new ArrayList<>();
+    public List<Sector> getSectors() { return sectors; }
+    public void setSectors(List<Sector> sectors) {
+        this.sectors = sectors != null ? sectors : new ArrayList<>();
     }
 }

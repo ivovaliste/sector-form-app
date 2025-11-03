@@ -1,13 +1,13 @@
 export interface Category {
   id: number;
   name: string;
-  subcategories: Subcategories[];
+  children?: Category[] | null;
 }
 
-export interface UserRequest {
-  id?: number; // optional for updates
+export interface UserDTO {
+  id?: number;
   name: string;
-  subcategoryIds: number[];
+  sectorIds: number[];
   agreedToTerms: boolean;
 }
 
@@ -16,14 +16,6 @@ export interface Option {
   label: string;
 }
 
-export interface Subcategories {
-  id: number;
-  name: string;
-}
 
-export interface UserResponse {
-  id?: number; // optional for updates
-  name: string;
-  subcategories: Subcategories[];
-  agreedToTerms: boolean;
-}
+
+

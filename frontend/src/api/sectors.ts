@@ -2,18 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from ".";
 import { Category } from "../types/user";
 
-export const fetchCategories = async (): Promise<Category[]> => {
-  try {
-    return await api.get("sectors").json<Category[]>();
-  } catch (err) {
-    console.error("Error fetching categories:", err);
-    throw err;
-  }
-};
+export const fetchCategories = (): Promise<Category[]> =>
+  api.get("sectors").json<Category[]>();
 
-export const useCategories = () => {
-  return useQuery<Category[], Error>({
+export const useCategories = () =>
+  useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
-};

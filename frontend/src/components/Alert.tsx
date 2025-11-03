@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 
 type AlertProps = {
   message: string;
-  duration?: number; // in milliseconds, default 2000ms
+  duration?: number;
   type?: "success" | "error" | "info";
-  onClose?: () => void; // called when alert disappears
+  onClose?: () => void;
 };
 
 export const Alert: React.FC<AlertProps> = ({

@@ -4,3 +4,6 @@ export * from "./MultiSelect";
 export * from "./InfoText";
 export * from "./Alert";
 export * from "./TextInput";
+export * from "./RenderError";
+
+

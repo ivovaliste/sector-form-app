@@ -6,7 +6,7 @@ public class UserResponse {
     private Long id;
     private String name;
     private boolean agreedToTerms;
-    private List<SectorSubcategoryResponse> subcategories;
+    private List<Long> sectorIds;  // <- only IDs
 
     // Getters & Setters
     public Long getId() { return id; }
@@ -18,6 +18,6 @@ public class UserResponse {
     public boolean isAgreedToTerms() { return agreedToTerms; }
     public void setAgreedToTerms(boolean agreedToTerms) { this.agreedToTerms = agreedToTerms; }
 
-    public List<SectorSubcategoryResponse> getSubcategories() { return subcategories; }
-    public void setSubcategories(List<SectorSubcategoryResponse> subcategories) { this.subcategories = subcategories; }
+    public List<Long> getSectorIds() { return sectorIds; }
+    public void setSectorIds(List<Long> sectorIds) { this.sectorIds = sectorIds; }
 }

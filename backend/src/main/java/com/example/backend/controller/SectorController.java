@@ -1,9 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.SectorCategoryResponse;
-import com.example.backend.dto.SectorSubcategoryResponse;
-import com.example.backend.model.SectorCategory;
-import com.example.backend.model.SectorSubcategory;
+import com.example.backend.dto.SectorResponse;
+import com.example.backend.model.Sector;
 import com.example.backend.service.SectorService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,32 +19,39 @@ public class SectorController {
         this.sectorService = sectorService;
     }
 
-    @GetMapping
-    public List<SectorCategoryResponse> getCategoriesWithSubcategories() {
-        return sectorService.getAllCategoriesWithSubcategories()
+    @GetMapping("/all")
+    public List<SectorResponse> getAllSectors() {
+        return sectorService.getAllSectors()
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    private SectorCategoryResponse toDto(SectorCategory category) {
-        SectorCategoryResponse dto = new SectorCategoryResponse();
-        dto.setId(category.getId());
-        dto.setName(category.getName());
-
-        List<SectorSubcategoryResponse> subDtos = category.getSubcategories()
+    @GetMapping
+    public List<SectorResponse> getTopLevelSectors() {
+        return sectorService.getTopLevelSectors()
                 .stream()
-                .map(this::toSubDto)
+                .map(this::toDto)
                 .collect(Collectors.toList());
-
-        dto.setSubcategories(subDtos);
-        return dto;
     }
 
-    private SectorSubcategoryResponse toSubDto(SectorSubcategory subcategory) {
-        SectorSubcategoryResponse dto = new SectorSubcategoryResponse();
-        dto.setId(subcategory.getId());
-        dto.setName(subcategory.getName());
+
+
+    // 🔹 Map Entity → DTO recursively
+    private SectorResponse toDto(Sector sector) {
+        SectorResponse dto = new SectorResponse();
+        dto.setId(sector.getId());
+        dto.setName(sector.getName());
+
+        if (sector.getChildren() != null && !sector.getChildren().isEmpty()) {
+            dto.setChildren(
+                    sector.getChildren()
+                            .stream()
+                            .map(this::toDto)
+                            .collect(Collectors.toList())
+            );
+        }
+
         return dto;
     }
 }

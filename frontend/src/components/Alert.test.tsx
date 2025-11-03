@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { act } from "react"; // ✅ import from react
+import { act } from "react";
 import { Alert } from "./Alert";
 
 jest.useFakeTimers();

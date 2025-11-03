@@ -1,50 +1,44 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.UserRequest;
+import com.example.backend.model.Sector;
 import com.example.backend.model.User;
-import com.example.backend.model.SectorSubcategory;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.repository.SectorSubcategoryRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepo;
-    private final SectorSubcategoryRepository subcategoryRepo;
+    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepo, SectorSubcategoryRepository subcategoryRepo) {
-        this.userRepo = userRepo;
-        this.subcategoryRepo = subcategoryRepo;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @Transactional
-    public User createOrUpdateUser(UserRequest request) {
+    // 🔹 Create or update a user
+    public User createOrUpdateUser(UserRequest request, List<Sector> sectors) {
         User user;
 
         if (request.getId() != null) {
-            user = userRepo.findById(request.getId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            Optional<User> optionalUser = userRepository.findById(request.getId());
+            user = optionalUser.orElse(new User());
         } else {
             user = new User();
         }
 
         user.setName(request.getName());
         user.setAgreedToTerms(request.isAgreedToTerms());
+        user.setSectors(sectors);  // set selected sectors
 
-        List<SectorSubcategory> subcategories = subcategoryRepo.findAllById(request.getSubcategoryIds());
-        user.setSubcategories(subcategories);
-
-        return userRepo.save(user);
+        return userRepository.save(user);
     }
 
+    // 🔹 Get user by ID
     public User getUserById(Long id) {
-        return userRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 }
